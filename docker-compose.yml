@@ -1,0 +1,48 @@
+version: "3.3"
+
+services:
+  traefik:
+    image: traefik:v2.8
+    container_name: traefik
+    restart: always
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ./traefik/dynamic:/etc/traefik/dynamic
+      - ./letsencrypt:/letsencrypt
+    networks:
+      traefik:
+        ipv4_address: 172.28.0.2
+
+  whoami-1:
+    image: traefik/whoami
+    container_name: whoami-1
+    restart: always
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+    networks:
+      traefik:
+        ipv4_address: 172.28.0.3
+
+  whoami-2:
+    image: traefik/whoami
+    container_name: whoami-2
+    restart: always
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+    networks:
+      traefik:
+        ipv4_address: 172.28.0.4
+
+networks:
+  traefik:
+    name: traefik

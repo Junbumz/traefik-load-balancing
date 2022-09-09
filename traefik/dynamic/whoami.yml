@@ -1,0 +1,30 @@
+http:
+  routers:
+    whoami-http:
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-https
+      service: whoami
+      rule: Host(`localhost`)
+
+    whoami-https:
+      entryPoints:
+        - websecure
+      service: whoami
+      rule: Host(`localhost`)
+      tls:
+        certresolver: leresolver
+
+  services:
+    whoami:
+      loadBalancer:
+        servers:
+          - url: http://whoami-1
+          - url: http://whoami-2
+
+  middlewares:
+    redirect-https:
+      redirectscheme:
+        scheme: https
+        permanent: true

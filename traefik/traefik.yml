@@ -1,0 +1,29 @@
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik/dynamic
+
+log:
+  level: WARN
+
+accessLog:
+  filePath: /access.log
+  bufferingSize: 100
+  fields:
+    names:
+      StartUTC: drop
+
+entryPoints:
+  web:
+    address: :80
+  websecure:
+    address: :443
+
+certificatesResolvers:
+  leresolver:
+    acme:
+      tlsChallenge: {}
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      email: jjb9083@naver.com
+      storage: /letsencrypt/acme.json
